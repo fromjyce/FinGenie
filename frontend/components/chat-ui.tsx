@@ -142,7 +142,7 @@ export default function ChatUI() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full" suppressHydrationWarning={true}>
       <div className="flex justify-between items-center p-4 border-b">
         <h1 className="text-xl font-semibold">FinGenie Bharat</h1>
         <LanguageDropdown className="w-32" />

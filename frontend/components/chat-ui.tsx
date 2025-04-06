@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,6 +12,23 @@ interface Message {
   content: string
   sender: "user" | "bot"
   timestamp: Date
+}
+
+const QUICK_ACTIONS = [
+  "How to save tax?",
+  "What is FD?",
+  "Best investment for beginners",
+  "Explain mutual funds",
+  "Government schemes for women",
+  "How to get out of debt?"
+]
+
+const FINANCIAL_TERMS = {
+  "FD": "A Fixed Deposit (FD) is a savings instrument where you deposit money with a bank for a fixed period at a higher interest rate than regular savings accounts. Minimum deposit is typically ₹1,000 with lock-in periods from 7 days to 10 years. Current rates range from 3-7% depending on tenure and bank.",
+  "ELSS": "Equity Linked Savings Scheme (ELSS) is a tax-saving mutual fund with 3-year lock-in. It offers ₹1.5 lakh deduction under Section 80C. Returns vary with market performance (historically 12-15% annually).",
+  "PPF": "Public Provident Fund (PPF) is a government-backed savings scheme with 15-year tenure. Current interest rate is 7.1%. Offers tax-free returns and qualifies for 80C deduction. Minimum annual deposit is ₹500, maximum ₹1.5 lakh.",
+  "NPS": "National Pension System (NPS) is a retirement-focused investment. Tier I accounts have lock-in until age 60. You can claim additional ₹50,000 deduction under Section 80CCD(1B) beyond the ₹1.5 lakh limit.",
+  "Sukanya Samriddhi": "This girl child savings scheme offers 8.2% interest (2024). Account can be opened for girls below 10 years with minimum ₹250 deposit. Amount doubles in ~8 years 9 months and qualifies for 80C deduction."
 }
 
 export default function ChatUI() {
@@ -54,27 +70,81 @@ export default function ChatUI() {
       }
       setMessages((prev) => [...prev, botMessage])
       setIsLoading(false)
-    }, 1500)
+    }, 1000)
   }
 
   const getBotResponse = (message: string): string => {
     const lowerMessage = message.toLowerCase()
-
-    if (lowerMessage.includes("tax") || lowerMessage.includes("taxes")) {
-      return "There are several ways to save on taxes in India. You can invest in tax-saving instruments like ELSS, PPF, or NPS under Section 80C. You can also claim deductions for health insurance premiums under Section 80D. Would you like more specific information on any of these options?"
-    } else if (lowerMessage.includes("fd") || lowerMessage.includes("fixed deposit")) {
-      return "A Fixed Deposit (FD) is a financial instrument provided by banks which provides investors a higher rate of interest than a regular savings account. The defining feature is that the money cannot be withdrawn before a specified period without penalty. Would you like to know about current FD rates?"
-    } else if (lowerMessage.includes("mutual fund") || lowerMessage.includes("invest")) {
-      return "Mutual funds are investment vehicles that pool money from many investors to purchase securities. They offer diversification and professional management. For beginners, I recommend starting with index funds or balanced funds. Would you like me to explain more about specific types of mutual funds?"
-    } else {
-      return "I'm your financial assistant. I can help you with information about investments, taxes, government schemes, and general financial planning. What specific financial topic would you like to learn more about?"
+    
+    // Check for exact financial terms
+    for (const [term, explanation] of Object.entries(FINANCIAL_TERMS)) {
+      if (new RegExp(`\\b${term.toLowerCase()}\\b`).test(lowerMessage)) {
+        return `${term} Explanation:\n${explanation}\n\nWould you like to know about similar alternatives?`
+      }
     }
+
+    // Categorized responses
+    if (lowerMessage.includes("tax") || lowerMessage.includes("tax saving")) {
+      return `Tax Saving Options (Section 80C):
+      1. ELSS Funds (3yr lock-in) - ~12% returns
+      2. PPF (15yr) - 7.1% interest
+      3. 5yr Bank FDs - ~6.5% returns
+      4. NPS (Tier I) - Extra ₹50k deduction
+      
+      You can save up to ₹1.5 lakh annually through these. Which would you like details about?`
+      
+    } else if (lowerMessage.includes("invest") || lowerMessage.includes("beginner")) {
+      return `For beginners in India, I recommend:
+      1. Index Funds (Nifty50) - Low cost, 12% avg returns
+      2. PPF - Safe 7.1% returns
+      3. RD + FD Ladder - For short-term goals
+      4. Gold ETFs - 8-10% long-term
+      
+      Start with ₹500/month SIPs. Need help choosing?`
+      
+    } else if (lowerMessage.includes("scheme") || lowerMessage.includes("yojana")) {
+      return `Government Schemes:
+      For Women:
+      - Sukanya Samriddhi (8.2%)
+      - PM Matru Vandana (₹5,000)
+      
+      For Farmers:
+      - PM Kisan (₹6,000/yr)
+      
+      For Seniors:
+      - PM Vaya Vandana (7.4%)
+      
+      Which category are you interested in?`
+      
+    } else if (lowerMessage.includes("debt") || lowerMessage.includes("loan")) {
+      return `Debt Management Steps:
+      1. List all debts (amount/interest)
+      2. Pay highest-interest first
+      3. Consider debt consolidation
+      4. Negotiate with lenders
+      5. Avoid new loans
+      
+      Need a personalized repayment plan?`
+      
+    } else {
+      return `I can help with:
+      - Tax planning (80C, HRA, 80D)
+      - Investment options (FD, MF, Stocks)
+      - Government schemes
+      - Debt management
+      
+      What specific financial topic would you like to explore?`
+    }
+  }
+
+  const handleQuickAction = (action: string) => {
+    setInput(action)
   }
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex justify-between items-center p-4 border-b">
-        <h1 className="text-xl font-semibold">New Chat</h1>
+        <h1 className="text-xl font-semibold">FinGenie Bharat</h1>
         <LanguageDropdown className="w-32" />
       </div>
 
@@ -97,10 +167,20 @@ export default function ChatUI() {
                 />
               </svg>
             </div>
-            <h2 className="text-xl font-semibold mb-2">Start a new conversation</h2>
-            <p className="text-gray-500 max-w-md">
-              Ask me anything about personal finance, investments, government schemes, or financial planning.
-            </p>
+            <h2 className="text-xl font-semibold mb-4">How can I help with your finances today?</h2>
+            
+            <div className="grid grid-cols-2 gap-3 w-full max-w-md">
+              {QUICK_ACTIONS.map((action) => (
+                <Button
+                  key={action}
+                  variant="outline"
+                  className="h-auto py-2 text-sm whitespace-normal"
+                  onClick={() => handleQuickAction(action)}
+                >
+                  {action}
+                </Button>
+              ))}
+            </div>
           </div>
         ) : (
           messages.map((message) => (
@@ -110,7 +190,7 @@ export default function ChatUI() {
                   message.sender === "user" ? "bg-indigo-600 text-white" : "bg-gray-200 text-gray-800"
                 }`}
               >
-                <p>{message.content}</p>
+                <p className="whitespace-pre-line">{message.content}</p>
                 <p className="text-xs opacity-70 mt-1">
                   {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                 </p>
@@ -146,7 +226,7 @@ export default function ChatUI() {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
+            placeholder="Ask about taxes, investments, schemes..."
             className="flex-1"
             disabled={isLoading}
           />
@@ -164,4 +244,3 @@ export default function ChatUI() {
     </div>
   )
 }
-

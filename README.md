@@ -123,7 +123,5 @@ FinGenie is developed as part of the “Chatbot Evolution: Show Off Your Hotbot!
 
 Made with ❤️ by:
 
-- Jyce – [GitHub](https://github.com/fromjyce)  
-- Nidhi – [GitHub](https://github.com/Nidhi045)  
-
-Feel free to fork, contribute, or open an issue. We’re open to collaboration and feedback!
+- Jayashre– [GitHub](https://github.com/fromjyce)  
+- Nidhi Gummaraju – [GitHub](https://github.com/Nidhi045)  

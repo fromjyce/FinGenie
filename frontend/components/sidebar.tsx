@@ -104,10 +104,10 @@ export default function Sidebar() {
           <div className="p-4 border-t">
             <div className="flex items-center space-x-3">
               <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                <span className="text-indigo-600 font-medium">U</span>
+                <span className="text-indigo-600 font-medium">PS</span>
               </div>
               <div>
-                <p className="text-sm font-medium">User Name</p>
+                <p className="text-sm font-medium">Pratika Sharma</p>
               </div>
             </div>
           </div>

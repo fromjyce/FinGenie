@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox" // Import Checkbox component
 
 export default function SignupPage() {
   const router = useRouter()
@@ -17,7 +18,7 @@ export default function SignupPage() {
     name: "",
     email: "",
     password: "",
-    language: "English",
+    languages: ["English"],
   })
   const [isLoading, setIsLoading] = useState(false)
 
@@ -26,8 +27,13 @@ export default function SignupPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleLanguageChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, language: value }))
+  const handleLanguageChange = (language: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      languages: prev.languages.includes(language)
+        ? prev.languages.filter((lang) => lang !== language)
+        : [...prev.languages, language],
+    }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -93,18 +99,16 @@ export default function SignupPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="language">Language Preference</Label>
-              <Select value={formData.language} onValueChange={handleLanguageChange}>
-                <SelectTrigger id="language">
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="English">English</SelectItem>
-                  <SelectItem value="Hindi">Hindi</SelectItem>
-                  <SelectItem value="Tamil">Tamil</SelectItem>
-                  <SelectItem value="Bengali">Bengali</SelectItem>
-                  <SelectItem value="Marathi">Marathi</SelectItem>
-                </SelectContent>
-              </Select>
+              {["English", "Hindi", "Tamil", "Bengali", "Marathi"].map((language) => (
+                  <div key={language} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={language}
+                      checked={formData.languages.includes(language)}
+                      onCheckedChange={() => handleLanguageChange(language)}
+                    />
+                    <Label htmlFor={language}>{language}</Label>
+                  </div>
+                ))}
             </div>
             <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white" disabled={isLoading}>
               {isLoading ? "Creating account..." : "Sign Up"}
